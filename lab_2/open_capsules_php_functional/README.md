@@ -1,5 +1,17 @@
 # TimeCapsule: pure PHP (functional style)
 
+## Lab 2: deployment architecture
+
+![TimeCapsule deployment architecture](docs/architecture.png)
+
+- [Editable draw.io diagram](docs/architecture.drawio)
+- [SVG diagram](docs/architecture.svg)
+- [ADR-0001: deployment with deploy.sh](docs/adr/0001-deploy-method.md)
+
+The diagram describes the lab deployment in `eu-central-1a`. The instance name, type and private IP come from the lab screenshots. Default VPC and public subnet placement follow the lab setup; subnet IDs and the Security Group name are omitted because they are not visible in the screenshots. Arrows show request initiation, including EC2 fetching code from GitHub. AWS icons are from the official [AWS Architecture Icons](https://aws.amazon.com/architecture/icons/) package.
+
+## Application
+
 This is the TimeCapsule app written in plain PHP (8.2+) without a framework, in a procedural
 ("functional") style: the code is plain functions in a few files, with no classes of our own.
 It uses PDO for PostgreSQL and plain PHP templates. The only PHP library is

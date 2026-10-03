@@ -5,9 +5,9 @@
 **ФИО:** Дмитрий Головичихин  
 **Группа:** IA2403  
 **Уровень:** Продвинутый  
-**Приложение:** TimeCapsule  
-**Вариант деплоя:** A / B  
-**Репозиторий:** <https://github.com/>...
+**Приложение:** TimeCapsule
+**Вариант деплоя:** B — скрипт `deploy.sh`<br>
+**Репозиторий:** [dumkaguv-cloud/timecapsule](https://github.com/dumkaguv-cloud/timecapsule)
 
 ---
 
@@ -211,6 +211,8 @@
 
 ![Rollback](screenshots/19-rollback.png)
 
+![Working app](screenshots/20-working-app.png)
+
 Показано работающее приложение после `git revert` и повторного деплоя.
 
 ### Контрольный вопрос
@@ -229,15 +231,21 @@
 
 ## Архитектура
 
-![Architecture](docs/architecture.png)
+![Архитектура развёртывания TimeCapsule](open_capsules_php_functional/docs/architecture.png)
 
-На схеме показаны пользователь, AWS Cloud, EC2, nginx, PHP-FPM, PostgreSQL, GitHub и компьютер разработчика.
+На схеме показан экземпляр `web-server` в регионе `eu-central-1`, зоне доступности `eu-central-1a`, default VPC и публичной подсети. Внутри EC2 работают nginx, PHP-FPM и PostgreSQL. Пользователи обращаются к nginx по HTTP, а PHP-приложение подключается к базе данных через `localhost:5432`.
+
+Изменения отправляются с компьютера разработчика в GitHub командой `git push`. Скрипт `deploy.sh` запускается на EC2 через SSH; сервер сам получает код из GitHub по HTTPS. Стрелка от EC2 к GitHub обозначает инициатора запроса на получение кода.
+
+[Редактируемая схема draw.io](open_capsules_php_functional/docs/architecture.drawio) · [Векторная версия SVG](open_capsules_php_functional/docs/architecture.svg)
+
+Использованы официальные [AWS Architecture Icons](https://aws.amazon.com/architecture/icons/). Имя экземпляра, тип, зона доступности и частный IP взяты со скриншота задания 2. Default VPC и публичная подсеть показаны в соответствии с выполненной последовательностью лабораторной; их идентификаторы и имя Security Group на имеющихся скриншотах не указаны. Security Group изображена как граница доступа к экземпляру.
 
 ---
 
 ## ADR
 
-[ADR-0001 — способ деплоя](docs/adr/0001-deploy-method.md)
+[ADR-0001 — развёртывание с помощью deploy.sh](open_capsules_php_functional/docs/adr/0001-deploy-method.md)
 
 ---
 
