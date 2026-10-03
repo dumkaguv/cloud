@@ -237,7 +237,7 @@
 
 Изменения отправляются с компьютера разработчика в GitHub командой `git push`. Скрипт `deploy.sh` запускается на EC2 через SSH; сервер сам получает код из GitHub по HTTPS. Стрелка от EC2 к GitHub обозначает инициатора запроса на получение кода.
 
-[Редактируемая схема draw.io](open_capsules_php_functional/docs/architecture.drawio) · [Векторная версия SVG](open_capsules_php_functional/docs/architecture.svg)
+[Векторная версия SVG](open_capsules_php_functional/docs/architecture.svg)
 
 Использованы официальные [AWS Architecture Icons](https://aws.amazon.com/architecture/icons/). Имя экземпляра, тип, зона доступности и частный IP взяты со скриншота задания 2. Default VPC и публичная подсеть показаны в соответствии с выполненной последовательностью лабораторной; их идентификаторы и имя Security Group на имеющихся скриншотах не указаны. Security Group изображена как граница доступа к экземпляру.
 
