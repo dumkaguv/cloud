@@ -245,40 +245,45 @@ with an explicit deny in a resource-based policy
 
 ## Задание 8. Проверка прав через тестовую роль
 
-**Роль:** `timecapsule-dev-s3-tester`; доверие — IAM-учётной записи; права — только `timecapsule-dev-app-s3`.
+**Роль:** `timecapsule-dev-s3-tester` (`arn:aws:iam::274520456264:role/timecapsule-dev-s3-tester`). Политика доверия разрешает `sts:AssumeRole` участникам этого AWS-аккаунта; прикреплена ровно одна политика прав — `timecapsule-dev-app-s3`. Теги: `Project=timecapsule`, `Environment=dev`, `Lab=lab4`, `Owner=dumkaguv`, `Name=timecapsule-dev-s3-tester`.
 
-**`aws sts get-caller-identity` после `assume-role`:**
+![Тестовая роль с единственной политикой приложения](screenshots/08-tester-role.png)
+
+**`aws sts get-caller-identity --query '{Account:Account,Arn:Arn}' --output json` после `assume-role`:**
 
 ```text
-[вставить вывод]
+{
+    "Account": "274520456264",
+    "Arn": "arn:aws:sts::274520456264:assumed-role/timecapsule-dev-s3-tester/lab4"
+}
 ```
 
-![Личность тестовой роли — скриншот ожидается](screenshots/08-tester-identity.png)
+![Личность тестовой роли и первые проверки](screenshots/08-tester-identity.png)
 
-До запуска команд заполнить столбец «Ожидаю», затем — «Получил». Для команды 8 подставить фактический VersionId.
+Колонка «Ожидаю» была заполнена до проверок. Для команды 8 идентификатор версии `XknGXjFFDMa3_AOzpEiUkt3GYouXg93p` получен через `head-object` после команды 1.
 
 | № | Команда | Ожидаю | Получил | Какое правило сработало |
 | ---: | --- | --- | --- | --- |
-| 1 | `aws s3 cp test.txt s3://$BUCKET/uploads/test.txt` |  |  |  |
-| 2 | `aws s3 ls s3://$BUCKET/uploads/` |  |  |  |
-| 3 | `aws s3 ls s3://$BUCKET` |  |  |  |
-| 4 | `aws s3 cp s3://$BUCKET/uploads/photo.txt -` |  |  |  |
-| 5 | `aws s3 ls s3://$BUCKET/backups/` |  |  |  |
-| 6 | `aws s3 cp test.txt s3://$BUCKET/backups/test.txt` |  |  |  |
-| 7 | `aws s3api list-object-versions --bucket $BUCKET --prefix uploads/` |  |  |  |
-| 8 | `aws s3api delete-object --bucket $BUCKET --key uploads/test.txt --version-id <VersionId>` |  |  |  |
-| 9 | `aws s3 rm s3://$BUCKET/uploads/test.txt` |  |  |  |
-| 10 | `aws s3 ls s3://$BUCKET/uploads/ --endpoint-url http://s3.eu-central-1.amazonaws.com` |  |  |  |
+| 1 | `aws s3 cp test.txt s3://$BUCKET/uploads/test.txt` | Разрешено | `upload: ./test.txt to s3://.../uploads/test.txt` | Разрешение в политике приложения: `s3:PutObject` |
+| 2 | `aws s3 ls s3://$BUCKET/uploads/` | Разрешено | Список объектов, включая `test.txt` | Разрешение в политике приложения: `s3:ListBucket` при `s3:prefix=uploads/` |
+| 3 | `aws s3 ls s3://$BUCKET` | AccessDenied | AccessDenied на `s3:ListBucket` | Неявный запрет: пустой префикс не соответствует `uploads/*` |
+| 4 | `aws s3 cp s3://$BUCKET/uploads/photo.txt -` | Разрешено | `photo placeholder` | Разрешение в политике приложения: `s3:GetObject` |
+| 5 | `aws s3 ls s3://$BUCKET/backups/` | AccessDenied | AccessDenied на `s3:ListBucket` | Неявный запрет: `backups/` не соответствует `uploads/*` |
+| 6 | `aws s3 cp test.txt s3://$BUCKET/backups/test.txt` | AccessDenied | AccessDenied на `s3:PutObject` | Неявный запрет: ARN объекта вне `uploads/*` |
+| 7 | `aws s3api list-object-versions --bucket $BUCKET --prefix uploads/` | AccessDenied | AccessDenied на `s3:ListBucketVersions` | Неявный запрет: действие не разрешено |
+| 8 | `aws s3api delete-object --bucket $BUCKET --key uploads/test.txt --version-id XknGXjFFDMa3_AOzpEiUkt3GYouXg93p` | AccessDenied | AccessDenied на `s3:DeleteObjectVersion` | Неявный запрет: действие не разрешено |
+| 9 | `aws s3 rm s3://$BUCKET/uploads/test.txt` | Разрешено | `delete: s3://.../uploads/test.txt` | Разрешение в политике приложения: `s3:DeleteObject` |
+| 10 | `aws s3 ls s3://$BUCKET/uploads/ --endpoint-url http://s3.eu-central-1.amazonaws.com` | AccessDenied | AccessDenied с `explicit deny in a resource-based policy` | Явный запрет в политике бакета: `aws:SecureTransport=false` |
 
-![Проверка прав тестовой роли — скриншот ожидается](screenshots/08-permissions.png)
+![Запрет доступа к версиям и HTTP, разрешённое обычное удаление](screenshots/08-permissions.png)
 
-**Несовпадения ожидания и результата:** [если есть, объяснить]
+**Несовпадения ожидания и результата:** нет. После команды 9 под своим IAM-пользователем я проверил историю: версия `XknGXjFFDMa3_AOzpEiUkt3GYouXg93p` сохранилась, а новой текущей записью стал маркер удаления `XYVP2k2y6V3d_UYxNCMZhs6Oca2XULDm`. В конце выполнил `unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN`; CloudShell снова показал `arn:aws:iam::274520456264:user/dumkaguv`. Локальный `~/test.txt` удалён.
 
 **Контрольные вопросы:**
 
-1. Чем политика доверия роли отличается от политики прав? — [ответ]
-2. Что произошло с `test.txt` после команды 9, можно ли его восстановить? — [ответ]
-3. Может ли обладатель учётных данных приложения безвозвратно уничтожить файлы? Что изменилось бы при `"s3:*"`? — [ответ]
+1. **Чем политика доверия роли отличается от политики прав?** Политика доверия определяет, кто может вызвать `sts:AssumeRole` для этой роли: в тесте это участники аккаунта `274520456264`, которым разрешено принимать роль. Политика прав определяет, какие действия доступны после принятия роли: здесь только четыре действия S3 в пределах `uploads/`.
+2. **Что произошло с `test.txt` после команды 9, можно ли его восстановить?** S3 создал маркер удаления, поэтому объект исчез из обычного списка. Предыдущая версия сохранилась. Администратор с правом `s3:DeleteObjectVersion` может удалить маркер и вернуть файл; тестовая роль не может удалить конкретную версию или этот маркер.
+3. **Может ли обладатель учётных данных приложения безвозвратно уничтожить файлы? Что изменилось бы при `"s3:*"`?** С текущими правами он может скрыть файлы маркерами удаления или перезаписать их, но не может сразу удалить прежние версии навсегда: `s3:DeleteObjectVersion` отсутствует. Старые версии всё же могут позже удаляться правилом жизненного цикла. При `s3:*` злоумышленник получил бы и право окончательно удалять версии объектов.
 
 ## Задание 9. Роль сервера
 
