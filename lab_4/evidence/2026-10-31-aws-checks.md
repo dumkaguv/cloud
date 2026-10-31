@@ -8,6 +8,7 @@
 - `get-bucket-versioning`: `Enabled`.
 - `get-bucket-lifecycle-configuration`: правило `timecapsule-dev-noncurrent`, статус `Enabled`, префикс `uploads/`; неактуальные версии переходят в `STANDARD_IA` через 30 дней и удаляются через 90 дней с `NewerNoncurrentVersions=2`; незавершённые multipart-загрузки отменяются через 7 дней; порог перехода 128 КБ.
 - `head-object uploads/2026/10/report.txt`: 15 байт, `text/plain`, `AES256`.
+- `aws s3 cp s3://timecapsule-dev-uploads-dumkaguv/uploads/photo.txt -`: `photo placeholder`. `HeadObject uploads/2026/10/report-2.txt` вернул 404; `list-object-versions` для точного ключа не показал ни версий, ни маркеров. История удаления из этих результатов не восстанавливается.
 - Политика `arn:aws:iam::274520456264:policy/timecapsule-dev-app-s3`: исходная версия `v1` разрешала `ListBucket` с `s3:prefix=uploads/*` и `GetObject`/`PutObject`/`DeleteObject` для `uploads/*`. Теги: `Project=timecapsule`, `Environment=dev`, `Owner=dumkaguv`, `Lab=lab4`, `Name=timecapsule-dev-app-s3`. Прикреплена к `timecapsule-dev-s3-tester` и `timecapsule-dev-app-role`.
 - Роль `timecapsule-dev-s3-tester` доверяет аккаунту `274520456264` и не имеет дополнительных inline-политик. Роль `timecapsule-dev-app-role` доверяет `ec2.amazonaws.com`.
 
