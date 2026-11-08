@@ -1,0 +1,6 @@
+Time: 2026-11-08T20:32:19.2951604+02:00
+Distinct responses during four-target phase:
+<h1>ip-10-16-0-113.eu-central-1.compute.internal</h1><p>Zone: eu-central-1a</p>
+<h1>ip-10-16-0-146.eu-central-1.compute.internal</h1><p>Zone: eu-central-1a</p>
+<h1>ip-10-16-1-114.eu-central-1.compute.internal</h1><p>Zone: eu-central-1b</p>
+<h1>ip-10-16-1-9.eu-central-1.compute.internal</h1><p>Zone: eu-central-1b</p>

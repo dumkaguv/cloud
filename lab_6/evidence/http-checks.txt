@@ -1,0 +1,27 @@
+Time: 2026-11-08T20:24:54.8222421+02:00
+ALB: http://lab6-alb-2016584846.eu-central-1.elb.amazonaws.com
+GET /health:
+HTTP/1.1 200 OK
+Date: Sun, 08 Nov 2026 18:24:53 GMT
+Content-Type: application/octet-stream
+Content-Length: 3
+Connection: keep-alive
+Server: nginx/1.30.6
+Last-Modified: Sun, 08 Nov 2026 18:21:25 GMT
+ETag: "6af0bda5-3"
+Accept-Ranges: bytes
+
+OK
+GET / (12 requests):
+<h1>ip-10-16-0-146.eu-central-1.compute.internal</h1><p>Zone: eu-central-1a</p>
+<h1>ip-10-16-1-114.eu-central-1.compute.internal</h1><p>Zone: eu-central-1b</p>
+<h1>ip-10-16-0-146.eu-central-1.compute.internal</h1><p>Zone: eu-central-1a</p>
+<h1>ip-10-16-0-146.eu-central-1.compute.internal</h1><p>Zone: eu-central-1a</p>
+<h1>ip-10-16-0-146.eu-central-1.compute.internal</h1><p>Zone: eu-central-1a</p>
+<h1>ip-10-16-0-146.eu-central-1.compute.internal</h1><p>Zone: eu-central-1a</p>
+<h1>ip-10-16-0-146.eu-central-1.compute.internal</h1><p>Zone: eu-central-1a</p>
+<h1>ip-10-16-0-146.eu-central-1.compute.internal</h1><p>Zone: eu-central-1a</p>
+<h1>ip-10-16-1-114.eu-central-1.compute.internal</h1><p>Zone: eu-central-1b</p>
+<h1>ip-10-16-0-146.eu-central-1.compute.internal</h1><p>Zone: eu-central-1a</p>
+<h1>ip-10-16-0-146.eu-central-1.compute.internal</h1><p>Zone: eu-central-1a</p>
+<h1>ip-10-16-1-114.eu-central-1.compute.internal</h1><p>Zone: eu-central-1b</p>

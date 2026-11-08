@@ -1,0 +1,21 @@
+AWS Console observations, eu-central-1, 2026-11-08
+Times below use UTC unless noted. This is a transcription of the displayed state, not a screenshot.
+
+20:19:35 UTC+02:00  lab6-asg created, desired/min/max = 2/2/4.
+20:20:46 UTC+02:00  ASG launched i-0b8e5e841d7a5fd12 (eu-central-1a) and i-09545317695c7550b (eu-central-1b).
+~20:22 UTC+02:00    lab6-tg: both registered targets Healthy.
+18:27:24 UTC        CloudWatch AlarmHigh changed OK -> In alarm; action lab6-requests-per-target executed successfully.
+18:27:35 UTC        ASG Activity Cause: AlarmHigh triggered policy lab6-requests-per-target, desired capacity 2 -> 4.
+20:27:37 UTC+02:00  ASG launched i-03654367d517b6cc4 and i-06146fe01b65f93de.
+~20:32 UTC+02:00    lab6-tg: four registered targets Healthy, two in each Availability Zone.
+
+AlarmHigh condition: RequestCountPerTarget > 50 for 3 datapoints within 3 minutes.
+18:57-19:13 UTC     CloudWatch CSV: RequestCountPerTarget = 0 in every one-minute datapoint.
+19:14:36 UTC        CloudWatch AlarmLow changed OK -> In alarm; History shows successful execution of lab6-requests-per-target.
+19:14:39 UTC        ASG Activity Cause: AlarmLow triggered policy lab6-requests-per-target, desired capacity 4 -> 3; i-03654367d517b6cc4 selected for termination.
+19:16:46 UTC        AlarmLow triggered policy lab6-requests-per-target again.
+19:16:49 UTC        ASG Activity Cause: desired capacity 3 -> 2; i-09545317695c7550b selected for termination. Both terminations initially showed ELB connection draining in progress.
+~19:20 UTC         ASG desired capacity = 2, status At desired capacity. lab6-tg showed two Healthy targets in eu-central-1a/eu-central-1b and one remaining Draining target.
+~19:20 UTC         User requested to retain lab6 resources; cleanup was not performed.
+
+AlarmLow condition observed after scale-out: RequestCountPerTarget < 35 for 15 datapoints within 15 minutes.
